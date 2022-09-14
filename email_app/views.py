@@ -4,6 +4,9 @@ from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
 import smtplib
 from django.conf import settings
+from django.core.mail import EmailMessage
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import get_template
 
 @csrf_exempt
 def receive(request):
@@ -37,4 +40,23 @@ def receive(request):
         return redirect("/")
 
 
+def handle(request):
+        subject = "Тема для вашего письма"
+        text_content = "Text"
+        html_content = get_template('mails/email.html').render()
+        from_email = 'django.message1401@gmail.com'
+        msg = EmailMultiAlternatives(subject, text_content, from_email, ['qurol.abdujalilov99@gmail.com'])
+        msg.attach_alternative(html_content, "text/html")
+        res = msg.send()
+        return render(request, "email_app/mail.html")
 
+
+def sender(request):
+    send_mail(
+        'Subject here',
+        'Here is the message.',
+        settings.EMAIL_HOST_USER,
+        ['qurol.abdujalilov99@gmail.com'],
+        fail_silently=False,
+    )
+    return render(request, "email_app/mail.html")
